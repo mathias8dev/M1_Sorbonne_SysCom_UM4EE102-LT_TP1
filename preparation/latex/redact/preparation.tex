@@ -1,0 +1,182 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\geometry{margin=2.5cm}
+
+% En-tête et pied de page
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Préparation TP - Lignes de Transmission}
+\lhead{M1 SysCom - UM4EE102}
+\cfoot{\thepage}
+
+\title{\textbf{Préparation du TP : Lignes de Transmission}}
+\author{M1 SysCom | UM4EE102 - Sorbonne Université \\ \\ \textbf{N° Étudiant:} 21507247 \\ \textbf{Nom et prénoms:} KALIPE Kossi Mathias}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Manipulation 2 - Question 2.2.b : Matrice S d'une résistance série}
+
+On considère un quadripôle constitué d'une résistance $R$ montée en série sur une ligne d'impédance caractéristique $Z_0 = 50\,\Omega$.
+
+\subsection{Calcul du coefficient de réflexion ($S_{11}$ et $S_{22}$)}
+
+On se place à l'accès 1. L'accès 2 est supposé adapté, c'est-à-dire terminé par une charge d'impédance $Z_0$ (donc $a_2 = 0$).
+L'impédance d'entrée vue depuis l'accès 1 est la mise en série de la résistance $R$ et de la charge $Z_0$ de l'accès 2 :
+$$Z_{in} = R + Z_0$$
+
+Le coefficient de réflexion à l'entrée est donné par la formule :
+$$S_{11} = \Gamma_{in} = \frac{Z_{in} - Z_0}{Z_{in} + Z_0}$$
+
+En remplaçant $Z_{in}$ :
+$$S_{11} = \frac{(R + Z_0) - Z_0}{(R + Z_0) + Z_0} = \frac{R}{R + 2Z_0}$$
+
+Le quadripôle étant symétrique (la résistance série est identique vue des deux côtés), on a :
+$$S_{22} = S_{11} = \frac{R}{R + 2Z_0}$$
+
+\subsection{Calcul du coefficient de transmission ($S_{21}$ et $S_{12}$)}
+
+Considérons une onde incidente de tension $V_1^+$ arrivant sur l'accès 1. La tension totale présente à l'entrée du quadripôle ($V_1$) est la somme de l'onde incidente et de l'onde réfléchie :
+$$V_1 = V_1^+ + V_1^- = V_1^+ (1 + S_{11})$$
+
+Cette tension $V_1$ est appliquée à l'ensemble du circuit (résistance $R$ en série avec la charge $Z_0$). La tension transmise à l'accès 2, notée $V_2$, s'obtient par un pont diviseur de tension :
+$$V_2 = V_1 \times \frac{Z_0}{R + Z_0}$$
+
+Comme l'accès 2 est adapté ($Z_{charge} = Z_0$), il n'y a pas d'onde réfléchie venant de la droite ($V_2^- = 0$). La tension $V_2$ correspond donc uniquement à l'onde transmise $V_2^+$. Le paramètre $S_{21}$ est défini par le rapport de l'onde transmise sur l'onde incidente :
+
+$$S_{21} = \frac{V_2^+}{V_1^+} = \frac{V_1}{V_1^+} \times \frac{Z_0}{R + Z_0} = (1 + S_{11}) \times \frac{Z_0}{R + Z_0}$$
+
+En remplaçant $S_{11}$ par son expression :
+$$1 + S_{11} = 1 + \frac{R}{R + 2Z_0} = \frac{R + 2Z_0 + R}{R + 2Z_0} = \frac{2(R + Z_0)}{R + 2Z_0}$$
+
+D'où :
+$$S_{21} = \frac{2(R + Z_0)}{R + 2Z_0} \times \frac{Z_0}{R + Z_0} = \frac{2Z_0}{R + 2Z_0}$$
+
+Le quadripôle étant passif et constitué d'éléments réciproques, la matrice est symétrique :
+$$S_{12} = S_{21} = \frac{2Z_0}{R + 2Z_0}$$
+
+\subsection{Matrice S finale}
+
+$$[S] = \begin{bmatrix}
+\frac{R}{R + 2Z_0} & \frac{2Z_0}{R + 2Z_0} \\
+\frac{2Z_0}{R + 2Z_0} & \frac{R}{R + 2Z_0}
+\end{bmatrix}$$
+
+\textit{Vérification de cohérence :} Pour $R=0$ (court-circuit série, ligne directe), on trouve bien $S_{11}=0$ et $S_{21}=1$. Pour $R \to \infty$ (circuit ouvert), on trouve $S_{11}=1$ et $S_{21}=0$.
+
+\section{Manipulation 2 - Prévision des signaux temporels}
+
+\subsection{Configuration du montage}
+
+Générateur : $Z_G = 50\Omega$, impulsion 1V, largeur ~100ns
+
+Lignes : $Z_0 = 50\Omega$, longueurs : 1m, 6m, 3m
+
+Oscilloscope : $Z_{osc} = 1M\Omega \approx \infty$ (circuit ouvert)
+
+\subsection{Paramètres de propagation}
+
+Vitesse de propagation dans le polyéthylène ($\varepsilon_r = 2.3$) :
+$$v = \frac{c}{\sqrt{\varepsilon_r}} = \frac{3 \times 10^8}{\sqrt{2.3}} \approx 1.98 \times 10^8 \text{ m/s}$$
+
+Temps de propagation :
+\begin{itemize}
+\item Ligne 1m (Générateur $\to$ Voie 1) : $t_1 = 1/1.98 \times 10^8 \approx 5$ ns
+\item Ligne 6m (Voie 1 $\to$ Résistance $R$) : $t_2 = 6/1.98 \times 10^8 \approx 30$ ns
+\item Ligne 3m (Résistance $R$ $\to$ Voie 2) : $t_3 = 3/1.98 \times 10^8 \approx 15$ ns
+\end{itemize}
+
+\subsection{Analyse des signaux sur la Voie 1}
+La sonde de la Voie 1 est située à 1 mètre du générateur.
+
+\begin{enumerate}
+    \item \textbf{Impulsion incidente ($t = t_1 \approx 5\,\text{ns}$)} :
+    L'impulsion part du générateur à $t=0$. Elle atteint la Voie 1 après $t_1$.
+    \item \textbf{Impulsion réfléchie ($t \approx 65\,\text{ns}$)} :
+    L'impulsion continue vers la résistance $R$, se réfléchit partiellement, et revient vers la Voie 1.
+    \begin{itemize}
+        \item Distance parcourue depuis la Voie 1 : Aller vers $R$ ($6\,\text{m}$) + Retour vers Voie 1 ($6\,\text{m}$) = $12\,\text{m}$.
+        \item Retard supplémentaire : $\Delta t = 2 \times t_2 \approx 60\,\text{ns}$.
+        \item Temps d'apparition total : $t_{echo} = t_1 + 2t_2 = 5 + 60 = 65\,\text{ns}$.
+    \end{itemize}
+    \item \textbf{Amplitude} : L'amplitude de l'écho sera atténuée par le coefficient de réflexion $\Gamma = S_{11} = \frac{R}{R+2Z_0}$.
+\end{enumerate}
+
+\subsection{Analyse des signaux sur la Voie 2}
+La sonde de la Voie 2 est située à l'extrémité de la ligne (après le tronçon de 3m), aux bornes de la charge terminale.
+
+\begin{enumerate}
+    \item \textbf{Impulsion transmise ($t \approx 50\,\text{ns}$)} :
+    Le signal doit traverser toute la ligne pour atteindre la Voie 2.
+    \item Temps d'apparition : $t_{trans} = t_1 + t_2 + t_3 = 5 + 30 + 15 = 50\,\text{ns}$.
+    \item \textbf{Absence de réflexion} :
+    La ligne est terminée par une charge adaptée $Z_t = Z_0 = 50\,\Omega$. L'oscilloscope est branché en parallèle avec une impédance d'entrée très élevée ($1\,\text{M}\Omega$).
+    $$Z_{eq} = Z_0 // R_{osc} \approx 50\,\Omega$$
+    La terminaison est donc adaptée. Le coefficient de réflexion en bout de ligne est nul.
+    \textbf{Conclusion :} On observera une seule impulsion sur la Voie 2 (pas d'échos multiples).
+\end{enumerate}
+
+\subsection{Méthode expérimentale pour déterminer R}
+Pour trouver la valeur de $R$ à partir des oscillogrammes :
+\begin{enumerate}
+    \item Mesurer l'amplitude de l'impulsion incidente sur la Voie 1 ($V_{inc}$).
+    \item Mesurer l'amplitude de l'impulsion transmise sur la Voie 2 ($V_{trans}$).
+    \item Calculer le coefficient de transmission expérimental : $T_{mes} = \frac{V_{trans}}{V_{inc}}$.
+    \item Inverser la relation théorique $T = \frac{2Z_0}{R + 2Z_0}$ pour isoler $R$ :
+    $$R = 2Z_0 \left( \frac{1}{T_{mes}} - 1 \right)$$
+\end{enumerate}
+
+\section{Manipulation 3 - Matrices S théoriques}
+
+\subsection{Coupleur directif}
+
+Pour un coupleur 10 dB idéal :
+
+Couplage : $|S_{31}| = 10^{-10/20} = 0.316$
+
+Transmission : $|S_{21}|^2 + |S_{31}|^2 = 1 \Rightarrow |S_{21}| = 0.949$
+
+Isolation parfaite : $S_{41} = 0$
+
+Adaptation : $S_{11} = S_{22} = S_{33} = S_{44} = 0$
+
+\subsection{Filtre passe-bande}
+
+Dans la bande passante :
+$$S_{11} \approx 0, \quad S_{21} \approx 1, \quad S_{12} = S_{21}$$
+
+Hors bande :
+$$|S_{11}| \approx 1, \quad |S_{21}| \approx 0$$
+
+\subsection{Circulateur (3 ports)}
+
+$$[S] = \begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}$$
+
+L'onde entre par le port 1 sort par le port 2, etc.
+
+\subsection{Isolateur (2 ports)}
+
+Sens direct : $S_{21} \approx 1$, $S_{11} \approx 0$
+
+Sens inverse : $S_{12} \approx 0$, $S_{22} \approx 0$
+
+$$[S] = \begin{bmatrix}
+0 & 0 \\
+1 & 0
+\end{bmatrix}$$
+
+\end{document}
